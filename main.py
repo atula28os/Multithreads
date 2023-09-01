@@ -7,15 +7,14 @@ from multiprocessing import Queue
 
 def main():    
     symbol_queue = Queue()
-    
     wiki_worker = WikiWorker()
     
-    companies = {}
+    yahoo_finance_threads = []
     counter = 0
     
     yahoo_finance_price_scheduler = YahooFinancePriceScheduler(input_queue=symbol_queue)
-    yahoo_finance_threads = []
     yahoo_finance_threads.append(yahoo_finance_price_scheduler)
+    
     for symbol in wiki_worker.get_sp_500_companies():
         if counter < 10:
             counter += 1
@@ -24,7 +23,6 @@ def main():
     symbol_queue.put("DONE")
     
     for i, worker in enumerate(yahoo_finance_threads):
-        print(worker.__dict__)
         worker.join()
         
         
