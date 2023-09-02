@@ -1,0 +1,17 @@
+.venv
+.pytest_cache/
+101/
+Asyncio101/
+ClassScope/
+Decorators/
+Inheritance/
+venv/
+sockets/
+Proj1/
+Proj2/
+Networking/
+Multithreading/
+V3/
+YTDSA/
+_pycache_/
+workers/__pycache__/*

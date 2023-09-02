@@ -4,26 +4,33 @@ from typing import Any
 import requests
 import logging
 import json 
+from datetime import datetime 
+
 
 logger = logging.getLogger()
 logger.setLevel(level=logging.INFO)
 
 class YahooFinancePriceScheduler(threading.Thread):
-    def __init__(self, input_queue, **kwargs):
+    def __init__(self, input_queue, output_queue, **kwargs):
         super(YahooFinancePriceScheduler,self).__init__(**kwargs)
         self._input_queue = input_queue
+        self._output_queue = output_queue
         self.start()
         
     def run(self):
         while True:
             val = self._input_queue.get()
             if val == 'DONE':
+                if self._output_queue is not None:
+                    self._output_queue.put("DONE")
                 break 
             
             yahoo_finance_price_worker = YahooFinancePriceWorker(symbol=val)
+            
             price = yahoo_finance_price_worker.get_price()
-            # self._output_queue.put(json.dumps({'symbol': val, 'price': price}))
-            print(price)
+            if self._output_queue is not None:
+                output_value = (val, price, datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+                self._output_queue.put(output_value)
 
 
 class YahooFinancePriceWorker():
@@ -40,7 +47,7 @@ class YahooFinancePriceWorker():
             response = requests.get(self._url)
             data = response.json()
             self._price = float(data['Global Quote']["05. price"])
-            print(f"Price for {self._symbol}: {self._price}")
+            # print(f"Price for {self._symbol}: {self._price}")
             return self._price
         except Exception as ex:
             logger.warning(f"Not able to find the price for {self._symbol}")
