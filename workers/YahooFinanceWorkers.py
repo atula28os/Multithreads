@@ -5,7 +5,7 @@ import requests
 import logging
 import json 
 from datetime import datetime 
-
+from queue import Empty
 
 logger = logging.getLogger()
 logger.setLevel(level=logging.INFO)
@@ -18,8 +18,14 @@ class YahooFinancePriceScheduler(threading.Thread):
         self.start()
         
     def run(self):
+        
         while True:
-            val = self._input_queue.get()
+            try:
+                val = self._input_queue.get(timeout=10)
+            except Empty:
+                print('Yahoo Scheduler is Empty!')
+                break
+            
             if val == 'DONE':
                 if self._output_queue is not None:
                     self._output_queue.put("DONE")

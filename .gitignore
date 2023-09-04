@@ -15,3 +15,5 @@ V3/
 YTDSA/
 _pycache_/
 workers/__pycache__/*
+ConcurrentProgram/workers/__pycache__/*
+*.pyc

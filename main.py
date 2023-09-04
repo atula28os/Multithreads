@@ -23,7 +23,7 @@ def main():
         mysqldb_threads.append(mysql_thread_scheduler)
     
     for symbol in wiki_worker.get_sp_500_companies():
-        if counter < 10:
+        if counter < 20:
             counter += 1
             symbol_queue.put(symbol)
     

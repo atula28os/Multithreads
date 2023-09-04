@@ -3,6 +3,7 @@ import threading
 from sqlalchemy import create_engine
 from sqlalchemy import text
 from datetime import datetime
+from queue import Empty
 
 class PostgresMasterScheduler(threading.Thread):
     def __init__(self, input_queue, **kwargs):
@@ -12,9 +13,16 @@ class PostgresMasterScheduler(threading.Thread):
         
     def run(self):
         
-        val = self._input_queue.get()
-        
-        if val != 'DONE':
+        while True:
+            try:
+                val = self._input_queue.get(timeout=10)
+            except Empty:
+                print("Queue Timeout..")
+                break
+                
+            if val == 'DONE':
+                break
+            
             symbol, price, extracted_time = list(val) 
             if price is None:
                 price = 0.00
