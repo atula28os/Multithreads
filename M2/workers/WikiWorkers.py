@@ -27,14 +27,6 @@ class WikiWorker():
             for company in json.loads(self.response.text):
                 yield company
                 
-    def get_company_data(self, symbol):
-        
-        if self.query is None:
-            print("First, get the company symbol")
-        else:
-            self._symbol = symbol
-        self.company_data = requests.get(url=f'{self._cashflow_url}/{self._symbol}', params={'apikey': API_KEY})
-        return self.company_data.text
     
 if __name__ == '__main__':
     
@@ -42,7 +34,4 @@ if __name__ == '__main__':
     response = wiki.get_companies_symbol(query='AA',count=5)
     for item in response:
         symbol = item['symbol']
-        company_data = wiki.get_company_data(symbol=symbol)
-        if len(company_data) > 5:
-            print(company_data)
-            print('========================')
+        print(symbol)
